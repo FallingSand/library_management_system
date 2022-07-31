@@ -51,6 +51,7 @@ def main_UI():
     from ui_main_reg import Ui_Dialog as ui_main_reg
     from ui_main_login import Ui_Dialog as ui_main_login
     from ui_login_guest_main import Ui_Dialog as ui_login_guest_main
+    from ui_login_user_main import Ui_Dialog as ui_login_user_main
     import datetime
     import random
 
@@ -59,9 +60,9 @@ def main_UI():
         g_u_a_TOKEN.append((str(round(random.random()**(random.random()/random.random()), 10)*10**10).split("."))[0])
     token_file = open("Inside_USERS_TOKEN.txt", "w+", buffering=-1, encoding="utf-8")
     for i in range(3):
-        token_file.write("GUEST " if i == 0 else "")
-        token_file.write("USER  " if i == 1 else "")
-        token_file.write("ADMIN " if i == 2 else "")
+        token_file.write("guest " if i == 0 else "")
+        token_file.write("user  " if i == 1 else "")
+        token_file.write("admin " if i == 2 else "")
         token_file.write(str(g_u_a_TOKEN[i])+"\n")
     token_file.close()
 
@@ -316,16 +317,24 @@ max_logs_uuid TEXT NOT NULL
             user_psw = self.user_password_input.text()
             if len(user_name) > 15 or len(user_psw) > 18:
                 QMessageBox.information(self, "输入错误", "用户名/密码太长了！", QMessageBox.No)
-            elif len(user_name) or len(user_psw):
+            elif len(user_name) == 0 or len(user_psw) == 0:
                 QMessageBox.information(self, "输入错误", "输入为空！", QMessageBox.No)
-            elif user_name == "guest":
-                if user_psw == g_u_a_TOKEN[0]:
+            elif user_name == "guest" or user_name == "user" or user_name == "admin":
+                if user_name == "guest" and user_psw == g_u_a_TOKEN[0]:
+                    self.user_password_input.clear()
                     self.guest_window()
+                elif user_name == "user" and user_psw == g_u_a_TOKEN[1]:
+                    self.user_password_input.clear()
+                    self.user_window()
                 else:
                     QMessageBox.warning(self, "密码错误", "密码错误", QMessageBox.No)
 
         def guest_window(self):
             pop_window = GuestWindow()
+            pop_window.exec()
+
+        def user_window(self):
+            pop_window = UserWindow()
             pop_window.exec()
 
     class GuestWindow(QtWidgets.QDialog, ui_login_guest_main):
@@ -335,6 +344,14 @@ max_logs_uuid TEXT NOT NULL
             self.setupUi(self)
             self.setFixedSize(self.size())
             self.title = self.setWindowTitle("贵宾")
+
+    class UserWindow(QtWidgets.QDialog, ui_login_user_main):
+        def __init__(self):
+            QtWidgets.QMainWindow.__init__(self)
+            ui_login_user_main.__init__(self)
+            self.setupUi(self)
+            self.setFixedSize(self.size())
+            self.title = self.setWindowTitle("用户")
 
     app = QtWidgets.QApplication(sys.argv)
     main_window = UiMainNotLogin()
