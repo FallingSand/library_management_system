@@ -52,6 +52,7 @@ def main_UI():
     from ui_main_login import Ui_Dialog as ui_main_login
     from ui_login_guest_main import Ui_Dialog as ui_login_guest_main
     from ui_login_user_main import Ui_Dialog as ui_login_user_main
+    from ui_login_admin_main import Ui_Dialog as ui_login_admin_main
     import datetime
     import random
 
@@ -326,6 +327,9 @@ max_logs_uuid TEXT NOT NULL
                 elif user_name == "user" and user_psw == g_u_a_TOKEN[1]:
                     self.user_password_input.clear()
                     self.user_window()
+                elif user_name == "admin" and user_psw == g_u_a_TOKEN[2]:
+                    self.user_password_input.clear()
+                    self.admin_window()
                 else:
                     QMessageBox.warning(self, "密码错误", "密码错误", QMessageBox.No)
 
@@ -335,6 +339,10 @@ max_logs_uuid TEXT NOT NULL
 
         def user_window(self):
             pop_window = UserWindow()
+            pop_window.exec()
+
+        def admin_window(self):
+            pop_window = AdminWindow()
             pop_window.exec()
 
     class GuestWindow(QtWidgets.QDialog, ui_login_guest_main):
@@ -352,6 +360,14 @@ max_logs_uuid TEXT NOT NULL
             self.setupUi(self)
             self.setFixedSize(self.size())
             self.title = self.setWindowTitle("用户")
+
+    class AdminWindow(QtWidgets.QDialog, ui_login_admin_main):
+        def __init__(self):
+            QtWidgets.QDialog.__init__(self)
+            ui_login_admin_main.__init__(self)
+            self.setupUi(self)
+            self.setFixedSize(self.size())
+            self.title = self.setWindowTitle("管理员")
 
     app = QtWidgets.QApplication(sys.argv)
     main_window = UiMainNotLogin()
